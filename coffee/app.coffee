@@ -10,3 +10,8 @@ $ ->
 
   # add the items
   collection.reset(items)
+
+  # setInterval ->
+  #   ($ "#shuffle").click()
+  # , 300
+
