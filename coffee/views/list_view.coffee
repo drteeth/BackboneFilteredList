@@ -4,23 +4,27 @@ class ListView extends Backbone.View
   initialize: (options) ->
     @collection.on 'reset', @setSubCollection, this
     @collection.on 'change', @change, this
+
     @amount = options.amount
     @subCollection = new Items
 
     @subCollection.on 'reset', @addAll, this
-    # @subCollection.on 'add', @addOne, this
+    @subCollection.on 'add', @addOne, this
     @subCollection.on 'remove', @removeOne, this
 
   change: (item) ->
-    if @amount != item.get "amount"
-      @removeFromSubCollection item
+    if @amount == item.get "amount"
+      _.defer =>
+        @addToSubCollection item
     else
-      @addToSubCollection item
-    @addAll()
+      @removeFromSubCollection item
 
   addOne: (item) ->
     view = new ItemView model:item
     @$el.append(view.render().el)
+
+  removeOne: (item) ->
+    item.trigger "remove"
 
   addAll: ->
     @$el.empty()
@@ -29,7 +33,6 @@ class ListView extends Backbone.View
   setSubCollection: ->
     @subCollection.reset @collection.sortBy @amount
 
-  update: (item) ->
 
   removeFromSubCollection: (item) ->
     @subCollection.remove item
@@ -37,9 +40,6 @@ class ListView extends Backbone.View
   addToSubCollection: (item) ->
     @subCollection.add item
 
-  removeOne: (item) ->
-    console.log 'remove'
-    item.trigger "remove"
 
   render: ->
     this

@@ -1,6 +1,6 @@
 class Items extends Backbone.Collection
   model: Item
 
-  sortBy: (a) ->
-    _(@models).filter (i) ->
-      a == i.get "amount"
+  sortBy: (amount) ->
+    _(@models).filter (item) ->
+      amount == item.get "amount"
