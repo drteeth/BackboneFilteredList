@@ -2,25 +2,43 @@ class PageView extends Backbone.View
 
   className: 'page'
 
-  events:
-    'click #shuffle' : 'shuffle'
-
   initialize: (options) ->
-    @listViews =
-      0: new ListView(amount: 0, collection: @collection)
-      1: new ListView(amount: 1, collection: @collection)
-      2: new ListView(amount: 2, collection: @collection)
+    @collection.on 'reset', @addAll, this
+    @collection.on 'remove', @removeOne, this
+    @collection.on 'add', @addOne, this
+    @collection.on 'change:amount', @moveItem, this
+    @views = {}
 
-  rnd: (n) ->
-    Math.floor(Math.random()*n)
+  moveItem: (item) ->
+    $listEl = @parentList(item)
+    view = @views[item.cid]
+    $listEl.append(view.el)
 
-  shuffle: ->
-    index = @rnd(@collection.length)
-    @collection.at(index).set('amount', @rnd(3))
+  parentList: (item) ->
+    @$el.find("#list-#{item.get('amount')}")
+
+  removeOne: (item) ->
+    delete @views[item.cid]
+
+  addOne: (item) ->
+    $list = @$el.find(@parentList(item))
+    view = new ItemView(model:item)
+    $list.append view.render().el
+    @views[item.cid] = view
+
+  addAll: ->
+    @collection.each(@addOne, this)
 
   render: ->
-    @$el.html "<button id=\"shuffle\">shuffle</button></div><div id=\"container\"></div>"
+    @$el.html "<div id=\"container\"></div>"
     $el = @$el.find('#container')
-    _.each @listViews, (view) ->
-      $el.append view.render().el
+
+    # create the 3 lists
+    _.each [0..2], (n) ->
+      $el.append "<ul id=\"list-#{n}\"></ul>"
     this
+
+  dispose: ->
+    # TODO dispose of all the child views
+
+

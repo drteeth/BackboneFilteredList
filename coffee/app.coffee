@@ -10,3 +10,25 @@ $ ->
 
   # add the items
   collection.reset(items)
+
+  rnd = (n) ->
+    Math.floor(Math.random()*n)
+
+  shuffle = ->
+    index = rnd(collection.length)
+    item = collection.at(index)
+    item.set('amount', rnd(3)) if item
+
+  removeAnItem = ->
+    index = rnd(collection.length)
+    item = collection.at(index)
+    collection.remove(item)
+
+  addAnItem = ->
+    i = collection.length + 1
+    collection.add new Item(title: "Item #{i}", amount: i % 3)
+
+  # shake things up
+  setInterval(shuffle, 100)
+  setInterval(removeAnItem, 300)
+  setInterval(addAnItem, 200)

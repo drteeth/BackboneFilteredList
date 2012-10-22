@@ -15,3 +15,15 @@ ul {
   display: table-cell;
   width: 33%;
 }
+
+ul#list-0 {
+  color: red;
+}
+
+ul#list-2 {
+  color: green;
+}
+
+ul#list-1 {
+  color: blue;
+}
